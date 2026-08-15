@@ -50,7 +50,6 @@ def main_keyboard(user_id=None):
 
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
-
 # 100 причин
 reasons = [
     "Ты невероятно красивая. ❤️",
