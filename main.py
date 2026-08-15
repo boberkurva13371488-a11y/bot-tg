@@ -12,6 +12,18 @@ dp = Dispatcher()
 
 users = set()
 
+def back_keyboard():
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(
+                    text="⬅️ Назад",
+                    callback_data="back"
+                )
+            ]
+        ]
+    )
+
 # Главное меню
 def main_keyboard(user_id=None):
     buttons = [
@@ -210,12 +222,28 @@ async def bussinka(callback: CallbackQuery):
 # Кнопка «100 причин почему ты мне нравишься»
 @dp.callback_query(lambda call: call.data == "reasons")
 async def show_reasons(callback: CallbackQuery):
+    await callback.answer()
+
+    # Первая страница
     await callback.message.edit_text(
-        reasons_text(),
-        reply_markup=back_keyboard(),
+        "💗 <b>100 причин почему ты мне нравишься:</b>\n\n"
+        "Сейчас расскажу тебе все 100 🥰",
         parse_mode="HTML"
     )
-    await callback.answer()
+
+    # Отправляем причины частями по 20
+    for start in range(0, len(reasons), 20):
+        part = reasons[start:start + 20]
+
+        text = "\n".join(
+            f"<b>{i}.</b> {reason}"
+            for i, reason in enumerate(part, start + 1)
+        )
+
+        await callback.message.answer(
+            text,
+            parse_mode="HTML"
+        )
 
 
 # Кнопка «Вернуться назад»
