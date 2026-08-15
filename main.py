@@ -24,6 +24,12 @@ def main_keyboard():
                     text="100 причин почему ты мне нравишься",
                     callback_data="reasons"
                 )
+            ],
+            [
+                InlineKeyboardButton(
+                    text="Соскучилась?🥺",
+                    url="https://t.me/stizzov?text=Сашуля%2C%20как%20дела%3F❤️"
+                )
             ]
         ]
     )
