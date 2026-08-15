@@ -1,8 +1,10 @@
 import asyncio
 import random
+
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import CommandStart
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+
 
 TOKEN = "8977965833:AAHdXevXIbB4vFUIbhjx8GUPhO5LLhhnAYs"
 ADMIN_ID = 8780322706
@@ -12,6 +14,8 @@ dp = Dispatcher()
 
 users = set()
 
+
+# Кнопка "Назад"
 def back_keyboard():
     return InlineKeyboardMarkup(
         inline_keyboard=[
@@ -23,6 +27,7 @@ def back_keyboard():
             ]
         ]
     )
+
 
 # Главное меню
 def main_keyboard(user_id=None):
@@ -62,6 +67,7 @@ def main_keyboard(user_id=None):
         ])
 
     return InlineKeyboardMarkup(inline_keyboard=buttons)
+
 
 # 100 причин
 reasons = [
@@ -161,9 +167,16 @@ reasons = [
     "Ты умеешь быть моей радостью.",
     "Ты очень-очень любимая.",
     "Мне нравится в тебе абсолютно всё.",
-    "И главная причина — ты просто моя бусинка. ❤️"
+    "И главная причина — ты просто моя бусинка. ❤️",
+
+    # 98-100
+    "Мне нравится, как рядом с тобой я чувствую себя счастливым. 🥰",
+    "Ты та, о которой мне хочется думать каждый день. ❤️",
+    "Потому что именно ты — моя любимая бусинка. 💗"
 ]
 
+
+# Комплименты
 compliments = [
     "Дашуля, ты самая красивая ❤️",
     "Твоя улыбка способна сделать любой мой день лучше 🥰",
@@ -187,9 +200,12 @@ compliments = [
     "Мне очень повезло, что именно ты есть в моей жизни ❤️"
 ]
 
+
+# Текст со всеми причинами
 def reasons_text():
     return (
         "💗 <b>100 причин почему ты мне нравишься:</b>\n\n"
+        "Сейчас расскажу тебе все 100 🥰\n\n"
         + "\n".join(
             f"<b>{i}.</b> {reason}"
             for i, reason in enumerate(reasons, 1)
@@ -210,7 +226,7 @@ async def start(message: types.Message):
     )
 
 
-# Кнопка «Кто моя бусинка?❤️»
+# Кто моя бусинка?
 @dp.callback_query(lambda call: call.data == "my_bussinka")
 async def bussinka(callback: CallbackQuery):
     await callback.answer(
@@ -219,45 +235,32 @@ async def bussinka(callback: CallbackQuery):
     )
 
 
-# Кнопка «100 причин почему ты мне нравишься»
+# 100 причин
 @dp.callback_query(lambda call: call.data == "reasons")
 async def show_reasons(callback: CallbackQuery):
-    await callback.answer()
-
-    # Первая страница
     await callback.message.edit_text(
-        "💗 <b>100 причин почему ты мне нравишься:</b>\n\n"
-        "Сейчас расскажу тебе все 100 🥰",
+        reasons_text(),
+        reply_markup=back_keyboard(),
         parse_mode="HTML"
     )
 
-    # Отправляем причины частями по 20
-    for start in range(0, len(reasons), 20):
-        part = reasons[start:start + 20]
-
-        text = "\n".join(
-            f"<b>{i}.</b> {reason}"
-            for i, reason in enumerate(part, start + 1)
-        )
-
-        await callback.message.answer(
-            text,
-            parse_mode="HTML"
-        )
+    await callback.answer()
 
 
-# Кнопка «Вернуться назад»
+# Назад в главное меню
 @dp.callback_query(lambda call: call.data == "back")
 async def back(callback: CallbackQuery):
     await callback.message.edit_text(
         "💗 <b>Привет, моя бусинка!</b>\n\n"
         "Выбери, что хочешь узнать:",
-        reply_markup=main_keyboard(),
+        reply_markup=main_keyboard(callback.from_user.id),
         parse_mode="HTML"
     )
+
     await callback.answer()
-    
-# Кнопка рассылки
+
+
+# Рассылка
 @dp.callback_query(lambda call: call.data == "broadcast")
 async def broadcast_button(callback: CallbackQuery):
     if callback.from_user.id != ADMIN_ID:
@@ -271,6 +274,8 @@ async def broadcast_button(callback: CallbackQuery):
 
     await callback.answer()
 
+
+# Получение сообщения для рассылки
 @dp.message()
 async def send_broadcast(message: types.Message):
     if message.from_user.id != ADMIN_ID:
@@ -289,6 +294,8 @@ async def send_broadcast(message: types.Message):
         f"✅ Сообщение отправлено {len(users)} пользователям."
     )
 
+
+# Комплимент
 @dp.callback_query(lambda call: call.data == "compliment")
 async def compliment(callback: CallbackQuery):
     text = random.choice(compliments)
@@ -297,6 +304,7 @@ async def compliment(callback: CallbackQuery):
         text,
         show_alert=True
     )
+
 
 # Запуск бота
 async def main():
