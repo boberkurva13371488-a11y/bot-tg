@@ -40,8 +40,7 @@ def main_keyboard(user_id=None):
         callback_data="compliment"
     )
 ],
-    
-    if user_id == ADMIN_ID:
+if user_id == ADMIN_ID:
         buttons.append([
             InlineKeyboardButton(
                 text="📢 Рассылка",
