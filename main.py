@@ -4,49 +4,45 @@ from aiogram.filters import CommandStart
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 TOKEN = "8977965833:AAHdXevXIbB4vFUIbhjx8GUPhO5LLhhnAYs"
+ADMIN_ID = 8780322706
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
+users = set()
 
 # Главное меню
-def main_keyboard():
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="Кто моя бусинка?❤️",
-                    callback_data="my_bussinka"
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="100 причин почему ты мне нравишься",
-                    callback_data="reasons"
-                )
-            ],
-            [
-                InlineKeyboardButton(
-                    text="Соскучилась?🥺",
-                    url="https://t.me/stizzov?text=Сашуля%2C%20как%20дела%3F❤️"
-                )
-            ]
+def main_keyboard(user_id=None):
+    buttons = [
+        [
+            InlineKeyboardButton(
+                text="Кто моя бусинка?❤️",
+                callback_data="my_bussinka"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                text="100 причин почему ты мне нравишься",
+                callback_data="reasons"
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                text="Соскучилась?🥺",
+                url="https://t.me/stizzov?text=Сашуля%2C%20как%20дела%3F❤️"
+            )
         ]
-    )
+    ]
 
+    if user_id == ADMIN_ID:
+        buttons.append([
+            InlineKeyboardButton(
+                text="📢 Рассылка",
+                callback_data="broadcast"
+            )
+        ])
 
-# Кнопка назад
-def back_keyboard():
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="Вернуться назад",
-                    callback_data="back"
-                )
-            ]
-        ]
-    )
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
 # 100 причин
@@ -164,10 +160,12 @@ def reasons_text():
 # Команда /start
 @dp.message(CommandStart())
 async def start(message: types.Message):
+    users.add(message.from_user.id)
+
     await message.answer(
         "💗 <b>Привет, моя бусинка!</b>\n\n"
         "Выбери, что хочешь узнать:",
-        reply_markup=main_keyboard(),
+        reply_markup=main_keyboard(message.from_user.id),
         parse_mode="HTML"
     )
 
@@ -202,7 +200,38 @@ async def back(callback: CallbackQuery):
         parse_mode="HTML"
     )
     await callback.answer()
+    
+# Кнопка рассылки
+@dp.callback_query(lambda call: call.data == "broadcast")
+async def broadcast_button(callback: CallbackQuery):
+    if callback.from_user.id != ADMIN_ID:
+        return
 
+    await callback.message.answer(
+        "📢 <b>Режим рассылки</b>\n\n"
+        "Отправь мне сообщение, которое нужно отправить всем пользователям бота.",
+        parse_mode="HTML"
+    )
+
+    await callback.answer()
+
+@dp.message()
+async def send_broadcast(message: types.Message):
+    if message.from_user.id != ADMIN_ID:
+        return
+
+    for user_id in users:
+        try:
+            await bot.send_message(
+                user_id,
+                message.text
+            )
+        except Exception:
+            pass
+
+    await message.answer(
+        f"✅ Сообщение отправлено {len(users)} пользователям."
+    )
 
 # Запуск бота
 async def main():
