@@ -48,7 +48,7 @@ if user_id == ADMIN_ID:
             )
         ])
 
-    return InlineKeyboardMarkup(inline_keyboard=buttons)
+return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
 # 100 причин
