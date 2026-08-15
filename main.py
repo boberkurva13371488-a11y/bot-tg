@@ -32,14 +32,15 @@ def main_keyboard(user_id=None):
                 text="Соскучилась?🥺",
                 url="https://t.me/stizzov?text=Сашуля%2C%20как%20дела%3F❤️"
             )
+        ],
+        [
+            InlineKeyboardButton(
+                text="Комплимент для Дашули 🥰",
+                callback_data="compliment"
+            )
         ]
     ]
-[
-    InlineKeyboardButton(
-        text="Комплимент для Дашули 🥰",
-        callback_data="compliment"
-    )
-],
+
     if user_id == ADMIN_ID:
         buttons.append([
             InlineKeyboardButton(
