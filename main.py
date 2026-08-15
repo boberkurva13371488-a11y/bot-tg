@@ -1,4 +1,5 @@
 import asyncio
+import random
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import CommandStart
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
@@ -33,7 +34,13 @@ def main_keyboard(user_id=None):
             )
         ]
     ]
-
+[
+    InlineKeyboardButton(
+        text="Комплимент для Дашули 🥰",
+        callback_data="compliment"
+    )
+],
+    
     if user_id == ADMIN_ID:
         buttons.append([
             InlineKeyboardButton(
@@ -146,6 +153,28 @@ reasons = [
     "И главная причина — ты просто моя бусинка. ❤️"
 ]
 
+compliments = [
+    "Дашуля, ты самая красивая ❤️",
+    "Твоя улыбка способна сделать любой мой день лучше 🥰",
+    "Ты невероятно милая, моя бусинка 💗",
+    "Мне безумно нравится твой характер ❤️",
+    "Ты делаешь мою жизнь намного ярче ✨",
+    "Ты прекрасна даже тогда, когда сама этого не замечаешь 🥺",
+    "У тебя самая прекрасная улыбка 😍",
+    "Ты именно та, о которой хочется заботиться каждый день ❤️",
+    "Рядом с тобой становится тепло и спокойно 🫂",
+    "Ты невероятно особенная для меня 💕",
+    "Мне нравится в тебе абсолютно всё 🥰",
+    "Дашуля, ты моё маленькое счастье ❤️",
+    "Ты умеешь делать обычные моменты незабываемыми ✨",
+    "Тебе безумно идёт улыбаться 😍",
+    "Ты самая нежная и любимая бусинка 💗",
+    "Я могу смотреть на тебя бесконечно ❤️",
+    "Ты заслуживаешь самых красивых слов на свете 🌹",
+    "Ты делаешь меня счастливее просто своим существованием 🥺",
+    "Ты невероятно притягательная 😍",
+    "Мне очень повезло, что именно ты есть в моей жизни ❤️"
+]
 
 def reasons_text():
     return (
@@ -231,6 +260,15 @@ async def send_broadcast(message: types.Message):
 
     await message.answer(
         f"✅ Сообщение отправлено {len(users)} пользователям."
+    )
+
+@dp.callback_query(lambda call: call.data == "compliment")
+async def compliment(callback: CallbackQuery):
+    text = random.choice(compliments)
+
+    await callback.answer(
+        text,
+        show_alert=True
     )
 
 # Запуск бота
