@@ -6,8 +6,8 @@ from aiogram.filters import CommandStart
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 
-TOKEN = "8977965833:AAHdXevXIbB4vFUIbhjx8GUPhO5LLhhnAYs"
-ADMIN_ID = 8780322706
+TOKEN = "8947496753:AAEa_2UDNfFu2O9liKlNIVbFxnfLi2uZuqA"
+ADMIN_ID = 8971406357
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
